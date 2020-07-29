@@ -39,7 +39,7 @@ const bookSchema = new mongoose.Schema({
 });
 
 bookSchema.virtual('coverImagePath').get(function () {
-    if (this.coverImageName != null && this.coverImageType != null) {
+    if (this.coverImage != null && this.coverImageType != null) {
         // 返回base64格式的图片
         return `data:${this.coverImageType};charset=utf-8;base64,${this.coverImage.toString('base64')}`;
     }
