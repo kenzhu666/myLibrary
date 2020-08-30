@@ -2,17 +2,17 @@
 <form action="/books" method='GET'>
     <div class='form-row'>
         <div class="form-item">
-            <label>Title</label>
+            <label>书名</label>
             <input type="text" name='title' value='<%= searchBooks.title %>' />
         </div>
     </div>
     <div class='form-row'>
         <div class="form-item">
-            <label>Published After</label>
+            <label>发布日期(几号之后)</label>
             <input type="date" name='publishedAfter' value='<%= searchBooks.publishedAfter %>' />
         </div>
         <div class="form-item">
-            <label>Published Before</label>
+            <label>发布日期(几号之前)</label>
             <input type="date" name='publishedBefore' value='<%= searchBooks.publishedBefore %>' />
         </div>
     </div>
