@@ -1,6 +1,8 @@
-<h2>New author</h2>
+<h2 class='page-header'>添加作者</h2>
 <form action="/authors" method='POST'>
     <%- include('_form_fields') %>
-    <a href="/authors">Cancel</a>
-    <button type='submit'>Create</button>
+    <div class="form-row form-row-end btn-row">
+        <a class='btn btn-danger' href="/authors">取消</a>
+        <button class='btn btn-primary' type='submit'>添加</button>
+    </div>
 </form>

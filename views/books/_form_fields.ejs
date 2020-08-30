@@ -1,34 +1,44 @@
-<div>
-    <label>Title</label>
-    <input type="text" name='title' value='<%= book.title %>'>
+<div class='form-row'>
+    <div class="form-item">
+        <label>书名</label>
+        <input type="text" name='title' value='<%= book.title %>'>
+    </div>
+    <div class="form-item">
+        <label>作者</label>
+        <select name="author">
+            <% authors.forEach(author => { %>
+            <!-- 如果当前这个author是book里的这个author, 那这个author选项就被选中 -->
+            <% if(author.id === book.author) { %>
+            <option selected label='<%= author.name %>' value="<%= author.id %>"></option>
+            <% } else {  %>
+            <option label='<%= author.name %>' value="<%= author.id %>"></option>
+            <% } %>
+            <% }) %>
+        </select>
+    </div>
 </div>
-<div>
-    <label>Author</label>
-    <select name="author">
-        <% authors.forEach(author => { %>
-        <!-- 如果当前这个author是book里的这个author, 那这个author选项就被选中 -->
-        <% if(author.id === book.author) { %>
-        <option selected label='<%= author.name %>' value="<%= author.id %>"></option>
-        <% } else {  %>
-        <option label='<%= author.name %>' value="<%= author.id %>"></option>
-        <% } %>
-        <% }) %>
-    </select>
+
+
+<div class="form-row">
+    <div class="form-item">
+        <label>出版日期</label>
+        <input type='date' name='publishDate' value='<%= book.publishDate == null ? '' : 
+            book.publishDate.toISOString().split('T')[0] %>' />
+    </div>
+    <div class="form-item">
+        <label>页数</label>
+        <input type="number" name='pageCount' value='<%= book.pageCount %>' />
+    </div>
 </div>
-<div>
-    <label>Publish Date</label>
-    <input type='date' name='publishDate' value='<%= book.publishDate == null ? '' : 
-    book.publishDate.toISOString().split('T')[0] %>' />
-</div>
-<div>
-    <label>Page Count</label>
-    <input type="number" name='pageCount' value='<%= book.pageCount %>' />
-</div>
-<div>
-    <label>Cover</label>
-    <input type="file" name='cover' class='filepond' />
-</div>
-<div>
-    <label>Description</label>
-    <textarea name="description"><%= book.description %></textarea>
+
+
+<div class="form-row">
+    <div class="form-item form-item-no-grow">
+        <label>上传封面</label>
+        <input type="file" name='cover' class='book-cover filepond' />
+    </div>
+    <div class="form-item">
+        <label>简介</label>
+        <textarea name="description"><%= book.description %></textarea>
+    </div>
 </div>

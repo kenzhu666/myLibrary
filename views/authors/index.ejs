@@ -1,10 +1,23 @@
-<h2>查找作者</h2>
+<h2 class='page-header'>查找作者</h2>
 <form action='/authors' method='GET'>
-    <label for="">Name</label>
-    <input type="text" name='name' value=' <%= searchAuthor.name %>'>
-    <button type='submit'>查找</button>
+    <div class="form-row">
+        <div class="form-item">
+            <label for="">作者名</label>
+            <input type="text" name='name' value=' <%= searchAuthor.name %>'>
+        </div>
+    </div>
+    <div class='form-row form-row-end'>
+        <button class='btn btn-primary' type='submit'>查找</button>
+    </div>
 </form>
 <br>
 <% authors.forEach(author => { %>
-<div><%= author.name %></div>
+<div class='author-row'>
+    <div class='author-name'><%= author.name %></div>
+    <div class='btn-row'>
+        <a class='btn btn-primary' href="/authors/<%= author.id %>">查看</a>
+        <a class='btn btn-primary' href="/authors/<%= author.id %>/edit">更改</a>
+        <%- include('../partials/deleteForm', {url:`/authors/${author.id}`}) %>
+    </div>
+</div>
 <% }) %>

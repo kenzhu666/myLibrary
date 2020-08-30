@@ -2,22 +2,8 @@ const express = require('express');
 const router = express.Router();
 const Author = require('../models/author');
 const Book = require('../models/book');
-
-
-//const path = require('path');
-//const uploadPath = path.join('public', Book.coverImagePath);
-
 const imageMimeTypes = ['image/jpeg', 'image/png', 'images/gif'];
-/*
-const upload = multer({
-    dest: uploadPath,
-    fileFilter: (req, file, callback) => {
-        callback(null, imageMimeTypes.includes(file.mimetype));
-    }
-});
-*/
 
-//const fs = require('fs');
 
 // All books route
 router.get('/', async (req, res) => {
@@ -49,13 +35,11 @@ router.get('/new', async (req, res) => {
 
 // Create book route
 router.post('/', async (req, res) => {
-    //const filename = req.file != null ? req.file.filename : null;
     const book = new Book({
         title: req.body.title,
         author: req.body.author,
         publishDate: new Date(req.body.publishDate),
         pageCount: req.body.pageCount,
-        // coverImageName: filename,
         description: req.body.description
     })
 
@@ -64,35 +48,113 @@ router.post('/', async (req, res) => {
 
     try {
         const newBook = await book.save();
-        res.redirect('books');
+        res.redirect(`books/${newBook.id}`)
     }
     catch{
-        /*
-        if (book.coverImageName != 'null') {
-            removeBookCover(book.coverImageName);
-        }
-        */
         renderNewPage(res, book, true);
     }
 })
 
-/*
-function removeBookCover(filename) {
-    fs.unlink(path.join(uploadPath, filename), err => {
-        if (err) console.error(err)
-    })
+
+
+
+/* 删改查每一本书 */
+
+// 1. 显示每一本书
+router.get('/:id', async (req, res) => {
+    try {
+        // 用populate author代表可以拿到对应这本书的 author 的所有属性(就可以拿到author.name)
+        // *注意，这个author是之前建立这本书的路由中定义的
+        const book = await Book.findById(req.params.id).populate('author').exec();
+        res.render('books/show', { book: book })
+    } catch{
+        res.redirect('/');
+    }
+})
+
+// 2. 更改/更新这本书的信息
+router.get('/:id/edit', async (req, res) => {
+    try {
+        const book = await Book.findById(req.params.id);
+        renderEditPage(res, book);
+    } catch{
+        res.redirect('/');
+    }
+})
+
+router.put('/:id', async (req, res) => {
+    let book
+    try {
+        book = await Book.findById(req.params.id);
+        book.title = req.body.title;
+        book.author = req.body.author;
+        book.publishDate = req.body.publishDate;
+        book.pageCount = req.body.pageCount;
+        book.description = req.body.description;
+
+        if (req.body.cover != null && req.body.cover !== '') {
+            saveCover(book, req.body.cover);
+        }
+
+        await book.save();
+        res.redirect(`/books/${book.id}`);
+    } catch{
+        if (book != null) {
+            renderEditPage(res, book, true)
+        } else {
+            res.redirect('/');
+        }
+    }
+})
+
+
+// 3. 删除这本书
+router.delete('/:id', async (req, res) => {
+    let book;
+    try {
+        book = await Book.findById(req.params.id);
+        await book.remove();
+        res.redirect('/books');
+    } catch{
+        if (book != null) {
+            res.render('books/show', {
+                book,
+                errorMessage: '无法删除这本书'
+            })
+        } else {
+            res.redirect('/');
+        }
+    }
+})
+
+
+
+
+async function renderEditPage(res, book, hasError = false) {
+    renderForm(res, book, 'edit', hasError);
 }
-*/
+
 
 async function renderNewPage(res, book, hasError = false) {
+    renderForm(res, book, 'new', hasError);
+}
+
+async function renderForm(res, book, form, hasError = false) {
     try {
         const authors = await Author.find({});
         const params = {
             authors: authors,
             book: book
         };
-        if (hasError) params.errorMessage = 'Error creating book';
-        res.render('books/new', params);
+
+        if (hasError) {
+            if (form === 'edit') {
+                params.errorMessage = 'Error editing book';
+            } else {
+                params.errorMessage = 'Error creating book';
+            }
+        }
+        res.render(`books/${form}`, params);
     } catch{
         res.redirect('/books');
     }
