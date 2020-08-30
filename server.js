@@ -1,5 +1,5 @@
 if (process.env.NODE_ENV !== 'production') {
-    require('dotenv').config();
+    require('dotenv').load();
 }
 
 const express = require('express');
@@ -20,17 +20,14 @@ app.use(methodOverride('_method'));
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: false }));
 
-
-app.use('/', indexRouter);
-app.use('/authors', authorRouter);
-app.use('/books', bookRouter);
-
 const mongoose = require('mongoose');
 mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true });
 const db = mongoose.connection;
 db.on('error', error => console.log('Error occured!'));
 db.once('open', () => console.log('Mongoose Connected successful!'));
 
-
+app.use('/', indexRouter);
+app.use('/authors', authorRouter);
+app.use('/books', bookRouter);
 
 app.listen(process.env.PORT || 3000);
